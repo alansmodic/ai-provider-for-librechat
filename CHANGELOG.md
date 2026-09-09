@@ -2,6 +2,20 @@
 
 All notable changes to this project are documented in this file.
 
+## [Unreleased]
+
+### Changed
+- Align PHPCS with WordPress VIP Go plus WordPress Core, Extra, and Docs.
+- Treat LibreChat as a `server` provider (self-hosted), not a cloud provider.
+- Sanitize instance URLs to `http`/`https` and API keys before use.
+- Point the plugin Settings link at a dedicated instance URL screen.
+
+### Added
+- Settings > LibreChat screen for the instance URL, with Settings API sanitization.
+- Admin notice when the WordPress AI Client is not available.
+- Uninstall handler that deletes the instance URL option.
+- GitHub Actions workflow to run PHPCS.
+
 ## [1.0.0]
 
 ### Added

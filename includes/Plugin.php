@@ -11,6 +11,7 @@ declare( strict_types=1 );
 namespace AlanSmodic\AiProviderForLibreChat;
 
 use AlanSmodic\AiProviderForLibreChat\Provider\LibreChatProvider;
+use AlanSmodic\AiProviderForLibreChat\Settings\LibreChatSettings;
 use AlanSmodic\AiProviderForLibreChat\Support\Credentials;
 use WordPress\AiClient\AiClient;
 use WordPress\AiClient\Providers\Http\DTO\ApiKeyRequestAuthentication;
@@ -32,12 +33,44 @@ class Plugin {
 	 * @since 1.0.0
 	 */
 	public function init(): void {
-		add_action( 'init', array( $this, 'register_provider' ), 5 );
-		add_action( 'init', array( $this, 'register_authentication' ), 25 );
+		$settings = new LibreChatSettings();
+		$settings->init();
+
 		add_filter(
 			'plugin_action_links_' . plugin_basename( AI_PROVIDER_FOR_LIBRECHAT_PLUGIN_FILE ),
 			array( $this, 'plugin_action_links' )
 		);
+
+		if ( ! class_exists( AiClient::class ) ) {
+			add_action( 'admin_notices', array( $this, 'missing_ai_client_notice' ) );
+			return;
+		}
+
+		add_action( 'init', array( $this, 'register_provider' ), 5 );
+		add_action( 'init', array( $this, 'register_authentication' ), 25 );
+	}
+
+	/**
+	 * Displays an admin notice when the WordPress AI Client is unavailable.
+	 *
+	 * @since 1.0.1
+	 */
+	public function missing_ai_client_notice(): void {
+		if ( ! current_user_can( 'activate_plugins' ) ) {
+			return;
+		}
+		?>
+		<div class="notice notice-error">
+			<p>
+				<?php
+				esc_html_e(
+					'AI Provider for LibreChat requires the WordPress AI Client (WordPress 7.0 or later). The provider was not registered.',
+					'ai-provider-for-librechat'
+				);
+				?>
+			</p>
+		</div>
+		<?php
 	}
 
 	/**
@@ -102,9 +135,13 @@ class Plugin {
 	 * @return array<string> Modified action links.
 	 */
 	public function plugin_action_links( array $links ): array {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return $links;
+		}
+
 		$settings_link = sprintf(
 			'<a href="%1$s">%2$s</a>',
-			admin_url( 'options-general.php?page=connectors' ),
+			esc_url( admin_url( 'options-general.php?page=' . LibreChatSettings::PAGE_SLUG ) ),
 			esc_html__( 'Settings', 'ai-provider-for-librechat' )
 		);
 

@@ -35,6 +35,12 @@ class LibreChatTextGenerationModel extends AbstractOpenAiCompatibleTextGeneratio
 	 * {@inheritDoc}
 	 *
 	 * @since 1.0.0
+	 *
+	 * @param HttpMethodEnum                     $method  The HTTP method.
+	 * @param string                             $path    The API endpoint path, relative to the base URI.
+	 * @param array<string, string|list<string>> $headers The request headers.
+	 * @param string|array<string, mixed>|null   $data    The request data.
+	 * @return Request The request object.
 	 */
 	protected function createRequest( HttpMethodEnum $method, string $path, array $headers = array(), $data = null ): Request {
 		return new Request(

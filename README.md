@@ -62,10 +62,12 @@ Then create an agent and generate an API key from the LibreChat UI.
 
 ### WordPress side
 
+In **Settings > LibreChat**, set your instance URL. Store the API key in **Settings > Connectors**, or:
+
 ```php
-// wp-config.php
+// wp-config.php — these override the settings screen when present
 define( 'LIBRECHAT_BASE_URL', 'https://your-librechat-instance' );
-define( 'LIBRECHAT_API_KEY', getenv( 'LIBRECHAT_API_KEY' ) ); // or use Settings > Connectors
+define( 'LIBRECHAT_API_KEY', getenv( 'LIBRECHAT_API_KEY' ) );
 ```
 
 There is deliberately **no default base URL** — LibreChat is self-hosted, so without an instance URL
