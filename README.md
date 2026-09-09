@@ -11,6 +11,21 @@ LibreChat provider for the [WordPress AI Client](https://make.wordpress.org/core
 
 Structured to match the official provider plugins and [Fueled's Ollama provider](https://github.com/Fueled/ai-provider-for-ollama).
 
+## Verification status
+
+Checked against a live LibreChat **v0.8.8-rc2** instance (Docker), not only against documentation:
+
+| Checked | Result |
+|---|---|
+| `POST /api/agents/v1/chat/completions` mounted | confirmed in route source |
+| `GET /api/agents/v1/models` mounted | confirmed in route source |
+| Bearer scheme | server replies `Expected: Bearer <api_key>` |
+| `remoteAgents` feature gate | confirmed (`checkRemoteAgentsFeature` middleware) |
+| Response bodies with a valid key | **not verified** — keys are issued through the LibreChat UI |
+
+So the URLs and authentication are verified against a real server. The response parsing relies on
+the OpenAI-compatible format, handled by the AI Client SDK.
+
 ## Why route through LibreChat
 
 LibreChat fronts many providers — OpenAI, Anthropic, Bedrock, Ollama, local models — so a single
