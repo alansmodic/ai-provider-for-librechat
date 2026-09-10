@@ -41,6 +41,12 @@ class LibreChatModelMetadataDirectory extends AbstractOpenAiCompatibleModelMetad
 	 * {@inheritDoc}
 	 *
 	 * @since 1.0.0
+	 *
+	 * @param HttpMethodEnum                     $method  The HTTP method.
+	 * @param string                             $path    The API endpoint path, relative to the base URI.
+	 * @param array<string, string|list<string>> $headers The request headers.
+	 * @param string|array<string, mixed>|null   $data    The request data.
+	 * @return Request The request object.
 	 */
 	protected function createRequest( HttpMethodEnum $method, string $path, array $headers = array(), $data = null ): Request {
 		// Metadata directories carry no RequestOptions; those exist only on models.
@@ -57,7 +63,10 @@ class LibreChatModelMetadataDirectory extends AbstractOpenAiCompatibleModelMetad
 	 *
 	 * @since 1.0.0
 	 *
+	 * @param Response $response The HTTP response from GET /models.
 	 * @return list<ModelMetadata> The agent metadata list.
+	 *
+	 * @throws ResponseException If the payload is missing the `data` list.
 	 */
 	protected function parseResponseToModelMetadataList( Response $response ): array {
 		$data = $response->getData();
@@ -76,7 +85,7 @@ class LibreChatModelMetadataDirectory extends AbstractOpenAiCompatibleModelMetad
 				// LibreChat may expose a friendlier agent name alongside the ID.
 				foreach ( array( 'name', 'display_name' ) as $key ) {
 					if ( isset( $entry[ $key ] ) && is_string( $entry[ $key ] ) && '' !== $entry[ $key ] ) {
-						$label = $entry[ $key ];
+						$label = sanitize_text_field( $entry[ $key ] );
 						break;
 					}
 				}
@@ -84,6 +93,7 @@ class LibreChatModelMetadataDirectory extends AbstractOpenAiCompatibleModelMetad
 				$agent_id = $entry;
 			}
 
+			$agent_id = sanitize_text_field( $agent_id );
 			if ( '' === $agent_id ) {
 				continue;
 			}
@@ -125,7 +135,16 @@ class LibreChatModelMetadataDirectory extends AbstractOpenAiCompatibleModelMetad
 			 * @param list<SupportedOption> $options  The supported options.
 			 * @param string                $agent_id The agent ID.
 			 */
-			$options = (array) apply_filters( 'ai_provider_for_librechat_supported_options', $options, $agent_id );
+			$filtered = apply_filters( 'ai_provider_for_librechat_supported_options', $options, $agent_id );
+
+			if ( is_array( $filtered ) ) {
+				$options = array();
+				foreach ( $filtered as $option ) {
+					if ( $option instanceof SupportedOption ) {
+						$options[] = $option;
+					}
+				}
+			}
 		}
 
 		return new ModelMetadata(

@@ -1,21 +1,64 @@
 <?xml version="1.0"?>
-<ruleset name="AI Provider for LibreChat">
-	<description>Coding standards for the Ask Sage AI provider plugin.</description>
+<ruleset
+	name="AI Provider for LibreChat"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/PHPCSStandards/PHP_CodeSniffer/master/phpcs.xsd"
+>
+	<description>WordPress VIP Go and WordPress Coding Standards for the LibreChat AI provider plugin.</description>
 
-	<file>.</file>
-	<exclude-pattern>/vendor/*</exclude-pattern>
-	<exclude-pattern>/node_modules/*</exclude-pattern>
+	<file>./includes/</file>
+	<file>./plugin.php</file>
+	<file>./uninstall.php</file>
 
-	<arg name="extensions" value="php"/>
-	<arg name="basepath" value="."/>
-	<arg name="colors"/>
+	<exclude-pattern>**/vendor/**</exclude-pattern>
+	<exclude-pattern>**/node_modules/**</exclude-pattern>
+	<exclude-pattern>**/tests/_output/**</exclude-pattern>
+
 	<arg value="sp"/>
+	<arg name="basepath" value="./"/>
+	<arg name="colors"/>
+	<arg name="extensions" value="php"/>
+	<arg name="parallel" value="20"/>
+	<arg name="severity" value="1"/>
+	<arg name="cache" value="tests/_output/phpcs-cache.json"/>
 
-	<rule ref="WordPress-VIP-Go"/>
+	<config name="testVersion" value="7.4-"/>
+	<config name="minimum_wp_version" value="7.0"/>
+
+	<!--
+		Load WordPress VIP Go first, then restore Core/Extra rules VIP may relax.
+		@see https://docs.wpvip.com/php_codesniffer/
+	-->
+	<rule ref="WordPress-VIP-Go">
+		<exclude name="WordPressVIPMinimum.JS"/>
+	</rule>
+	<rule ref="WordPress-Core">
+		<exclude name="Generic.Files.OneObjectStructurePerFile"/>
+		<exclude name="Universal.Files.SeparateFunctionsFromOO"/>
+	</rule>
+	<rule ref="WordPress-Extra">
+		<!-- PSR-4 class files (matches the official AI provider plugins). -->
+		<exclude name="WordPress.Files.FileName"/>
+		<exclude name="Generic.Commenting.DocComment.MissingShort"/>
+	</rule>
 	<rule ref="WordPress-Docs"/>
+	<rule ref="PHPCompatibilityWP"/>
+
 	<rule ref="WordPress.WP.I18n">
 		<properties>
-			<property name="text_domain" type="array" value="ai-provider-for-librechat"/>
+			<property name="text_domain" type="array">
+				<element value="ai-provider-for-librechat"/>
+			</property>
+		</properties>
+	</rule>
+
+	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+		<properties>
+			<property name="prefixes" type="array">
+				<element value="ai_provider_for_librechat"/>
+				<element value="AI_PROVIDER_FOR_LIBRECHAT"/>
+				<element value="AlanSmodic"/>
+			</property>
 		</properties>
 	</rule>
 
@@ -23,8 +66,4 @@
 	<rule ref="WordPress.NamingConventions.ValidFunctionName.MethodNameInvalid">
 		<exclude-pattern>/includes/*</exclude-pattern>
 	</rule>
-
-	<config name="minimum_wp_version" value="7.0"/>
-	<config name="testVersion" value="7.4-"/>
-	<rule ref="PHPCompatibilityWP"/>
 </ruleset>

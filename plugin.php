@@ -22,10 +22,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'AI_PROVIDER_FOR_LIBRECHAT_MIN_PHP_VERSION', '7.4' );
-define( 'AI_PROVIDER_FOR_LIBRECHAT_MIN_WP_VERSION', '7.0' );
-define( 'AI_PROVIDER_FOR_LIBRECHAT_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
-define( 'AI_PROVIDER_FOR_LIBRECHAT_PLUGIN_FILE', __FILE__ );
+if ( ! defined( 'AI_PROVIDER_FOR_LIBRECHAT_MIN_PHP_VERSION' ) ) {
+	define( 'AI_PROVIDER_FOR_LIBRECHAT_MIN_PHP_VERSION', '7.4' );
+}
+if ( ! defined( 'AI_PROVIDER_FOR_LIBRECHAT_MIN_WP_VERSION' ) ) {
+	define( 'AI_PROVIDER_FOR_LIBRECHAT_MIN_WP_VERSION', '7.0' );
+}
+if ( ! defined( 'AI_PROVIDER_FOR_LIBRECHAT_PLUGIN_DIR' ) ) {
+	define( 'AI_PROVIDER_FOR_LIBRECHAT_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
+}
+if ( ! defined( 'AI_PROVIDER_FOR_LIBRECHAT_PLUGIN_FILE' ) ) {
+	define( 'AI_PROVIDER_FOR_LIBRECHAT_PLUGIN_FILE', __FILE__ );
+}
 
 /**
  * Displays an admin notice for requirement failures.
@@ -122,11 +130,21 @@ function register_autoloader(): void {
 			if ( 0 !== strpos( $class_name, $prefix ) ) {
 				return;
 			}
-			$relative = substr( $class_name, strlen( $prefix ) );
-			$path     = AI_PROVIDER_FOR_LIBRECHAT_PLUGIN_DIR . 'includes/' . str_replace( '\\', '/', $relative ) . '.php';
-			if ( file_exists( $path ) ) {
-				require_once $path;
+
+			$relative = str_replace( '\\', '/', substr( $class_name, strlen( $prefix ) ) );
+			if ( '' === $relative || false !== strpos( $relative, '..' ) || false !== strpos( $relative, "\0" ) ) {
+				return;
 			}
+
+			$includes_dir = AI_PROVIDER_FOR_LIBRECHAT_PLUGIN_DIR . 'includes/';
+			$path         = $includes_dir . $relative . '.php';
+
+			if ( ! is_file( $path ) ) {
+				return;
+			}
+
+			// phpcs:ignore WordPressVIPMinimum.Files.IncludingFile.UsingVariable -- Path is constrained to this plugin's includes directory.
+			require_once $path;
 		}
 	);
 }

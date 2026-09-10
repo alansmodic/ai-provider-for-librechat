@@ -53,17 +53,14 @@ class LibreChatProvider extends AbstractApiProvider {
 		$provider_meta = array(
 			Credentials::PROVIDER_ID,
 			'LibreChat',
-			// Self-hosted, but reached over HTTP like any remote API.
-			ProviderTypeEnum::cloud(),
+			ProviderTypeEnum::server(),
 			'https://www.librechat.ai/docs/features/agents_api',
-			RequestAuthenticationMethod::apiKey(),
+			class_exists( RequestAuthenticationMethod::class ) ? RequestAuthenticationMethod::apiKey() : null,
 		);
 
 		// Provider description support was added in AI Client 1.2.0.
 		if ( version_compare( AiClient::VERSION, '1.2.0', '>=' ) ) {
-			$provider_meta[] = function_exists( '__' )
-				? __( 'Agents from a self-hosted LibreChat instance, including any models it fronts.', 'ai-provider-for-librechat' )
-				: 'Agents from a self-hosted LibreChat instance, including any models it fronts.';
+			$provider_meta[] = __( 'Agents from a self-hosted LibreChat instance, including any models it fronts.', 'ai-provider-for-librechat' );
 		}
 
 		// Provider logo path support was added in AI Client 1.3.0.
@@ -98,6 +95,12 @@ class LibreChatProvider extends AbstractApiProvider {
 	 * {@inheritDoc}
 	 *
 	 * @since 1.0.0
+	 *
+	 * @param ModelMetadata    $model_metadata    Metadata for the selected agent.
+	 * @param ProviderMetadata $provider_metadata Metadata for this provider.
+	 * @return ModelInterface The model implementation.
+	 *
+	 * @throws RuntimeException If the agent does not advertise text generation.
 	 */
 	protected static function createModel(
 		ModelMetadata $model_metadata,
@@ -110,8 +113,13 @@ class LibreChatProvider extends AbstractApiProvider {
 		}
 
 		throw new RuntimeException(
-			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception message, not output.
-			'Unsupported LibreChat agent capabilities for: ' . $model_metadata->getId()
+			esc_html(
+				sprintf(
+					/* translators: %s: LibreChat agent ID */
+					__( 'Unsupported LibreChat agent capabilities for: %s', 'ai-provider-for-librechat' ),
+					$model_metadata->getId()
+				)
+			)
 		);
 	}
 }

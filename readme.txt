@@ -30,8 +30,8 @@ generate an API key in the LibreChat UI.
 
 In WordPress, set:
 
-1. `LIBRECHAT_BASE_URL` — your instance URL (constant or environment variable)
-2. `LIBRECHAT_API_KEY` — environment variable, PHP constant, or Settings > Connectors
+1. **Settings > LibreChat** — your instance URL (`LIBRECHAT_BASE_URL` constant or environment variable overrides this)
+2. **Settings > Connectors** — API key (`LIBRECHAT_API_KEY` environment variable or PHP constant overrides this)
 
 == Frequently Asked Questions ==
 

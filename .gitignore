@@ -1,3 +1,5 @@
 /vendor/
 /node_modules/
 .DS_Store
+/tests/_output/*.json
+/tests/_output/*.xml
