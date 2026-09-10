@@ -9,10 +9,13 @@
 	<file>./includes/</file>
 	<file>./plugin.php</file>
 	<file>./uninstall.php</file>
+	<file>./tests/</file>
 
 	<exclude-pattern>**/vendor/**</exclude-pattern>
 	<exclude-pattern>**/node_modules/**</exclude-pattern>
 	<exclude-pattern>**/tests/_output/**</exclude-pattern>
+	<exclude-pattern>**/tests/stubs/**</exclude-pattern>
+	<exclude-pattern>**/tests/bootstrap.php</exclude-pattern>
 
 	<arg value="sp"/>
 	<arg name="basepath" value="./"/>
@@ -65,5 +68,27 @@
 	<!-- SDK contracts require camelCase method names. -->
 	<rule ref="WordPress.NamingConventions.ValidFunctionName.MethodNameInvalid">
 		<exclude-pattern>/includes/*</exclude-pattern>
+	</rule>
+
+	<rule ref="Squiz.Commenting.FunctionComment.Missing">
+		<exclude-pattern>*/tests/*</exclude-pattern>
+	</rule>
+	<rule ref="Squiz.Commenting.FunctionComment.MissingParamTag">
+		<exclude-pattern>*/tests/*</exclude-pattern>
+	</rule>
+	<rule ref="Squiz.Commenting.FunctionCommentThrowTag.Missing">
+		<exclude-pattern>*/tests/*</exclude-pattern>
+	</rule>
+	<rule ref="Squiz.Commenting.ClassComment.Missing">
+		<exclude-pattern>*/tests/*</exclude-pattern>
+	</rule>
+	<rule ref="Squiz.Commenting.FileComment.Missing">
+		<exclude-pattern>*/tests/*</exclude-pattern>
+	</rule>
+	<rule ref="Squiz.Commenting.VariableComment.Missing">
+		<exclude-pattern>*/tests/*</exclude-pattern>
+	</rule>
+	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+		<exclude-pattern>*/tests/*</exclude-pattern>
 	</rule>
 </ruleset>
