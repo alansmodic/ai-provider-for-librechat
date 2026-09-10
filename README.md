@@ -48,6 +48,14 @@ composer require alansmodic/ai-provider-for-librechat
 
 Or drop the directory into `wp-content/plugins/` and activate — a fallback PSR-4 autoloader is included, so `composer install` is optional.
 
+## Development
+
+```bash
+composer install
+composer phpunit
+composer phpcs
+```
+
 ### LibreChat side
 
 Enable the Agents API in `librechat.yaml`:

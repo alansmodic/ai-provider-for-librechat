@@ -15,6 +15,7 @@ All notable changes to this project are documented in this file.
 - Admin notice when the WordPress AI Client is not available.
 - Uninstall handler that deletes the instance URL option.
 - GitHub Actions workflow to run PHPCS.
+- PHPUnit tests for credentials, availability, agent discovery, and the provider factory.
 
 ## [1.0.0]
 
